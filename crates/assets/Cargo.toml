@@ -28,7 +28,12 @@ gpui-fast-platform.workspace = true
 rust-embed = { version = "8.7.2", features = ["interpolate-folder-path", "include-exclude"] }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
-reqwest = { workspace = true }
+# Plain `reqwest` 0.13 rather than the workspace's `gpui-pre-reqwest` 0.12: the
+# two bring different `wasm-streams` majors, which both export the JS type
+# `IntoUnderlyingByteSource`, and wasm-bindgen refuses the duplicate export. An
+# application that links iroh brings 0.13 already; this lets the two share a
+# bundle. `reqwest::get`, the status and the bytes are the same in 0.13.
+reqwest = { version = "0.13", default-features = false }
 wasm-bindgen = "0.2"
 wasm-bindgen-futures = "0.4"
 
